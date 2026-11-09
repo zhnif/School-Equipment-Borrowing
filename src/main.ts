@@ -37,16 +37,22 @@ const equipment: Equipment[] = [
 ]
 
 const today = new Date()
-const localDate = (date: Date) => {
+
+function localDate(date: Date) {
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
   return `${year}-${month}-${day}`
 }
-const offsetDate = (offset: number) => {
-  const date = new Date(today)
-  date.setDate(date.getDate() + offset)
+
+function offsetDate(days: number) {
+  const date = new Date()
+  date.setDate(date.getDate() + days)
   return localDate(date)
+}
+
+function getToday() {
+  return localDate(new Date())
 }
 
 const starterRecords: BorrowRecord[] = [
@@ -247,13 +253,44 @@ function renderModal(preselectedItem = '') {
         <label class="form-field">Barang / ruang<select name="itemId" required>${options}</select></label>
         <fieldset class="borrower-field"><legend>Identitas peminjam</legend><div class="borrower-options"><label><input type="radio" name="borrowerType" value="named" checked><span>${icon('user')} Dengan nama</span></label><label><input type="radio" name="borrowerType" value="anonymous"><span>${icon('user')} Samaran</span></label></div></fieldset>
         <label class="form-field" id="borrower-name-field">Nama peminjam<input name="borrowerName" type="text" placeholder="Contoh: Nadia Putri" maxlength="80"></label>
-        <div class="date-fields"><label class="form-field">Tanggal pinjam<input name="borrowDate" type="date" value="${localDate(new Date())}" required></label><label class="form-field">Tanggal kembali<input name="dueDate" type="date" value="${due}" required></label></div>
+        
+        <div class="date-fields">
+  <label class="form-field">
+    Tanggal pinjam
+    <input
+      name="borrowDate"
+      type="date"
+      value="${getToday()}"
+      min="${getToday()}"
+      required
+    >
+  </label>
+
+  <label class="form-field">
+    Tanggal kembali 
+    <input
+      name="dueDate"
+      type="date"
+      value="${due}"
+      min="${getToday()}"
+      required
+    >
+  </label>
+</div>
+
         <label class="form-field">Catatan <span class="optional">(opsional)</span><textarea name="notes" rows="2" maxlength="180" placeholder="Keperluan peminjaman..."></textarea></label>
         <p class="form-hint">${icon('check')} Barang yang belum dikembalikan tidak bisa dipinjam ulang.</p>
         <div class="modal-actions"><button class="secondary-button" data-close-modal type="button">Batal</button><button class="primary-button" type="submit">Simpan peminjaman</button></div>
       </form>
     </section>
   </div>`)
+  const borrowDateInput = app.querySelector<HTMLInputElement>('#borrow-form [name="borrowDate"]')
+  const dueDateInput = app.querySelector<HTMLInputElement>('#borrow-form [name="dueDate"]')
+  borrowDateInput?.addEventListener('change', () => {
+    if (!borrowDateInput.value || !dueDateInput) return
+    dueDateInput.min = borrowDateInput.value
+    if (dueDateInput.value < borrowDateInput.value) dueDateInput.value = borrowDateInput.value
+  })
   app.querySelector<HTMLInputElement>('[name="borrowerName"]')?.focus()
 }
 
@@ -370,7 +407,15 @@ document.querySelector<HTMLDivElement>('#app')?.addEventListener('submit', (even
     showToast('Nama peminjam wajib diisi.')
     return
   }
-  if (!borrowDate || !dueDate || dueDate < borrowDate) {
+  if (!borrowDate || !dueDate) {
+    showToast('Tanggal pinjam dan tanggal kembali wajib diisi.')
+    return
+  }
+  if (borrowDate < getToday()) {
+    showToast('Tanggal pinjam tidak boleh sebelum hari ini.')
+    return
+  }
+  if (dueDate < borrowDate) {
     showToast('Tanggal kembali harus sama atau setelah tanggal pinjam.')
     return
   }

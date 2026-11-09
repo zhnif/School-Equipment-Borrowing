@@ -7,9 +7,9 @@
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  --purple: #6d4aff;
-  --purple-dark: #5738e8;
-  --ink: #24233a;
+  --purple: #2B4251;
+  --purple-dark: #45415E;
+  --ink: #5B7D87;
   --muted: #89899d;
   --line: #eeedf4;
   --panel: #fff;
@@ -51,7 +51,7 @@ button { cursor: pointer; }
 .nav-link:hover { color: var(--purple); background: #f8f6ff; }
 .nav-link.active { color: var(--purple); background: #f2efff; }
 .nav-link.active .icon { color: var(--purple); }
-.nav-count { min-width: 22px; margin-left: auto; padding: 3px 6px; border-radius: 12px; color: #7256ee; background: #e7e1ff; text-align: center; font-size: 10px; }
+.nav-count { min-width: 22px; margin-left: auto; padding: 3px 6px; border-radius: 12px; color: #5B7D87; background: #e7e1ff; text-align: center; font-size: 10px; }
 .sidebar-bottom { margin-top: auto; }
 .help-card { padding: 14px 13px; border: 1px solid #eeedf4; border-radius: 11px; }
 .help-mark { width: 22px; height: 22px; display: grid; place-items: center; margin-bottom: 11px; color: var(--purple); background: #f0edff; border-radius: 7px; font-size: 12px; font-weight: 700; }
